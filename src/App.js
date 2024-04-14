@@ -1,13 +1,16 @@
-import React from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import Items from './components/Items'
+import React from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Items from './components/Items';
+import Categories from './components/Categories'
+import { toHaveAccessibleDescription } from '@testing-library/jest-dom/matchers';
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       orders: [],
+      current: [],
       items: [
         {
           id: 1,
@@ -51,17 +54,31 @@ class App extends React.Component {
         },
       ]
     }
+    this.state.currentItems = this.state.items
     this.addToOrder = this.addToOrder.bind(this)
     this.deleteOrder = this.deleteOrder.bind(this)
+    this.chooseCategory = this.chooseCategory.bind(this)
   }
   render() {
   return (
     <div className='wrapper'>
       <Header orders={this.state.orders} onDelete = {this.deleteOrder} />
-      <Items items={this.state.items} onAdd = {this.addToOrder}/>
+      <Categories chooseCategory = {this.chooseCategory}/>
+      <Items items={this.state.currentItems} onAdd = {this.addToOrder}/>
       <Footer /> 
     </div>
   );
+  }
+
+  chooseCategory(category) {
+    if (category === 'all') {
+      this.setState({currentItems: this.state.items})
+      return
+    }
+
+    this.setState({
+      currentItems: this.state.items.filter(el => el.category === category)
+    })
   }
 
   deleteOrder(id) {
